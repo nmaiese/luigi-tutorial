@@ -3,6 +3,7 @@
 # complete with the code required to run the python file as a luigi script
 
 import luigi
+import time
 
 class HelloWorld(luigi.Task):
     def requires(self):
@@ -10,8 +11,10 @@ class HelloWorld(luigi.Task):
     def output(self):
         return luigi.LocalTarget('helloworld.txt')
     def run(self):
+        time.sleep(15)
         with self.output().open('w') as outfile:
             outfile.write('Hello World!\n')
+        time.sleep(15)
 
 #  Let's try adding another task, NameSubstituter, that will take the file we created in our HelloWorld task, and replace "World" with some name.
 
@@ -23,10 +26,18 @@ class NameSubstituter(luigi.Task):
     def output(self): 
         return luigi.LocalTarget(self.input().path + '.name_' + self.name)
     def run(self): 
+        time.sleep(15)
         with self.input().open() as infile, self.output().open('w') as outfile:
             text = infile.read()
             text = text.replace('World', self.name)
             outfile.write(text)
+        time.sleep(15)
+
+
+# Visualizing running workflows (optional)
+# In order to see what's happening before the workflow is finished, 
+# we need to add a little sleep to the tasks, since they are running so fast. 
+# So, let's add a sleep of 15 seconds before and after the main chunk of work in each of the tasks
 
 
 
